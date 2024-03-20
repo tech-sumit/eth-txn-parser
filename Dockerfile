@@ -18,6 +18,7 @@ RUN go build -o parser
 
 # Expose the port on which the application will run (if applicable)
 ENV PORT=80
+ENV INITIAL_BLOCK=19476043
 
 # Define the command to run the application
 CMD ["./parser"]

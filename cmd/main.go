@@ -7,12 +7,22 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 )
 
 func main() {
-	ethParser := ethereum.NewParser(19476043)
+	var initialBlock int
+	if initialBlockStr, exists := os.LookupEnv("INITIAL_BLOCK"); exists {
+		var err error
+		initialBlock, err = strconv.Atoi(initialBlockStr)
+		if err != nil {
+			fmt.Printf("Invalid INITIAL_BLOCK value: %s; using default 0\n", err)
+		}
+	}
+
+	ethParser := ethereum.NewParser(initialBlock)
 	go ethParser.StartParsing()
 
 	srv := pkg.RunGinServer(ethParser)
