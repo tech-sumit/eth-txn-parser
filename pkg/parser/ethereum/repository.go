@@ -87,19 +87,14 @@ func (p *EthereumParser) parseBlock(blockNumber int) error {
 			to = fmt.Sprintf("%s", txData["to"])
 		}
 
-		var value string
-		if _, exists := txData["value"]; exists {
-			fmt.Printf("value: %+v\n", txData["value"])
-			value = fmt.Sprintf("%s", txData["value"])
-		}
-
 		p.mutex.Lock()
+		t := parser.TransactionFromJson(txData)
 		if p.subscribers[from] {
-			p.transactions[from] = append(p.transactions[from], parser.Transaction{From: from, To: to, Value: value})
+			p.transactions[from] = append(p.transactions[from], t)
 		}
 
 		if p.subscribers[to] {
-			p.transactions[to] = append(p.transactions[to], parser.Transaction{From: from, To: to, Value: value})
+			p.transactions[to] = append(p.transactions[to], t)
 		}
 		p.mutex.Unlock()
 	}

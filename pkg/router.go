@@ -5,6 +5,10 @@ import (
 	"eth-indexer/pkg/controllers"
 	"eth-indexer/pkg/parser"
 	"github.com/gin-gonic/gin"
+
+	_ "eth-indexer/docs"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 	"net/http"
 	"os"
@@ -12,6 +16,8 @@ import (
 
 func RunGinServer(parser parser.Parser) *http.Server {
 	r := gin.Default()
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	ct := controllers.Setup(parser)
 	// Endpoint to get the current block

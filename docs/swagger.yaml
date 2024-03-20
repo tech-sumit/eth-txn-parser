@@ -1,0 +1,140 @@
+definitions:
+  controllers.CurrentBlockResponse:
+    properties:
+      currentBlock:
+        example: 1234567
+        type: integer
+    type: object
+  controllers.SubscribeRequest:
+    properties:
+      address:
+        example: 0x...
+        type: string
+    type: object
+  controllers.SubscribeResponse:
+    properties:
+      subscribed:
+        type: boolean
+    type: object
+  parser.Transaction:
+    description: Transaction object
+    properties:
+      accessList:
+        description: EIP-2930 access list.
+        items: {}
+        type: array
+      blockHash:
+        description: Hash of the block where this transaction was in.
+        type: string
+      blockNumber:
+        description: Number of the block where this transaction was in.
+        type: string
+      chainId:
+        description: EIP-155 chain ID. Null means legacy transaction.
+        type: string
+      from:
+        description: Address of the sender.
+        type: string
+      gas:
+        description: Gas provided by the sender.
+        type: string
+      gasPrice:
+        description: Gas price provided by the sender in Wei.
+        type: string
+      hash:
+        description: Hash of the transaction.
+        type: string
+      input:
+        description: The data sent along with the transaction.
+        type: string
+      maxFeePerGas:
+        description: Maximum fee per gas willing to pay in Wei.
+        type: string
+      maxPriorityFeePerGas:
+        description: Maximum priority fee per gas willing to pay in Wei.
+        type: string
+      nonce:
+        description: The number of transactions made by the sender prior to this one.
+        type: string
+      r:
+        description: ECDSA signature r.
+        type: string
+      s:
+        description: ECDSA signature s.
+        type: string
+      to:
+        description: Address of the receiver. null when it's a contract creation transaction.
+        type: string
+      transactionIndex:
+        description: Integer of the transaction's index position in the block.
+        type: string
+      type:
+        description: EIP-2718 type of the transaction.
+        type: string
+      v:
+        description: ECDSA recovery id.
+        type: string
+      value:
+        description: Value transferred in Wei.
+        type: string
+      yParity:
+        description: EIP-1559 transaction y-parity.
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /currentBlock:
+    get:
+      description: Retrieves the current block number that the parser is aware of.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns the current block number
+          schema:
+            $ref: '#/definitions/controllers.CurrentBlockResponse'
+      summary: Get current block number
+  /subscribe:
+    post:
+      consumes:
+      - application/json
+      description: Subscribes to an Ethereum address to monitor transactions.
+      parameters:
+      - description: Subscription request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.SubscribeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.SubscribeResponse'
+      summary: Subscribe to an address
+  /transactions/{address}:
+    get:
+      description: Retrieves the list of transactions for a subscribed address.
+      parameters:
+      - description: The Ethereum address
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/parser.Transaction'
+            type: array
+        "404":
+          description: Not Found if the address is not subscribed or does not have
+            transactions
+      summary: Get transactions for an address
+swagger: "2.0"
