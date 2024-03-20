@@ -14,11 +14,11 @@ RUN go mod download
 COPY . .
 
 # Build the Go application
-RUN go build -o parser
+RUN go build -o parser cmd/main.go
 
 # Expose the port on which the application will run (if applicable)
 ENV PORT=80
-ENV INITIAL_BLOCK=19476043
+ENV INITIAL_BLOCK=19476188
 
 # Define the command to run the application
 CMD ["./parser"]
